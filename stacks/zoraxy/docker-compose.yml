@@ -1,0 +1,21 @@
+volumes:
+  zoraxy-data:
+  zoraxy-ssl:
+services:
+  zoraxy:
+    image: 'zoraxydocker/zoraxy:latest'
+    container_name: zoraxy
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '8001:8000'
+    environment:
+      - DNS_PROVIDER=ipv64
+      - LETS_ENCRYPT_EMAIL=${LETS_ENCRYPT_EMAIL}
+      - DOMAIN=${DDNS_DOMAIN}
+    volumes:
+      - 'zoraxy-ssl:/etc/letsencrypt'
+      - 'zoraxy-data:/opt/zoraxy/config/'
+    command:
+      - "--noauth=false"

@@ -1,0 +1,20 @@
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    environment:
+      - HOMEPAGE_ALLOWED_HOSTS=${HOST_IP}:3000,home.${DOMAIN},localhost:3000
+      - HOMEPAGE_VAR_BESZEL_USER=${BESZEL_USER}
+      - HOMEPAGE_VAR_BESZEL_PASS=${BESZEL_PASS}
+    volumes:
+      - /opt/homepage:/app/config
+      - ${DATA_DIR}/.beszel:/mnt/nvme:ro
+    networks:
+      - default
+      - zoraxy_default
+networks:
+  zoraxy_default:
+    external: true

@@ -1,0 +1,12 @@
+services:
+  actual:
+    image: actualbudget/actual-server:latest
+    container_name: actual
+    restart: unless-stopped
+    volumes:
+      - ${DATA_DIR}/actual:/data
+    networks:
+      - zoraxy_default
+networks:
+  zoraxy_default:
+    external: true

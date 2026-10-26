@@ -1,0 +1,23 @@
+services:
+  pihole:
+    container_name: pihole
+    image: docker.io/pihole/pihole:latest
+    # Host network so FTL sees the LAN's ARP table and can show device MAC addresses
+    network_mode: host
+    environment:
+      TZ: Europe/Berlin
+      FTLCONF_webserver_api_password: ${FTLCONF_webserver_api_password}
+      # Port 80 belongs to the reverse proxy
+      FTLCONF_webserver_port: "81o,[::]:81o"
+      # Tailscale clients query from outside the LAN; port 53 is not exposed to the internet
+      FTLCONF_dns_listeningMode: "all"
+      FTLCONF_webserver_session_timeout: 86400
+      FTLCONF_dns_revServers: "true,${LAN_SUBNET},${ROUTER_IP},${ROUTER_DOMAIN}"
+      # unbound on the host, DNS over TLS
+      FTLCONF_dns_upstreams: "127.0.0.1#5335"
+      # Wildcard: every *.${DOMAIN} resolves to the reverse proxy
+      FTLCONF_misc_dnsmasq_lines: "address=/${DOMAIN}/${HOST_IP}"
+    volumes:
+      - "./etc-pihole:/etc/pihole"
+      - "./etc-dnsmasq.d:/etc/dnsmasq.d"
+    restart: unless-stopped

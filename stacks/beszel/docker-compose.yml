@@ -1,0 +1,28 @@
+services:
+  beszel:
+    image: henrygd/beszel:0.20.0
+    container_name: beszel
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SSL_CERT_DIR: /extra-ca
+    volumes:
+      - /opt/stacks/zoraxy-ca/ca.pem:/extra-ca/ca.pem:ro
+      - ${DATA_DIR}/beszel/hub:/beszel_data
+      - ${DATA_DIR}/beszel/socket:/beszel_socket
+    networks:
+      - zoraxy_default
+  beszel-agent:
+    image: henrygd/beszel-agent:0.20.0
+    container_name: beszel-agent
+    restart: unless-stopped
+    network_mode: host
+    env_file: .env.agent
+    volumes:
+      - ${DATA_DIR}/beszel/agent:/var/lib/beszel-agent
+      - ${DATA_DIR}/beszel/socket:/beszel_socket
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${DATA_DIR}/.beszel:/extra-filesystems/nvme:ro
+networks:
+  zoraxy_default:
+    external: true

@@ -1,0 +1,6 @@
+.env
+.env.agent
+*.pem
+encryption_key
+data/
+app/
